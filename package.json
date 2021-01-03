@@ -1,6 +1,7 @@
 {
-  "name": "mongodb-controllers",
+  "name": "@kibcode/mongodb-controllers",
   "version": "1.1.0",
+  "private": false,
   "description": "Collection controllers for MongoDB",
   "repository": "git@github.com:wolframdeus/mongodb-controllers.git",
   "homepage": "https://github.com/wolframdeus/mongodb-controllers",
@@ -16,9 +17,10 @@
   "scripts": {
     "build": "gulp",
     "commit": "git-cz",
+    "test": "tsc --noEmit",
     "release": "standard-version -a",
     "postrelease": "npm-run-all release:*",
-    "release:tags": "git push --follow-tags origin master",
+    "release:tags": "git push --follow-tags origin master && yarn publish --non-interactive --access public",
     "release:github": "dotenv -e .env -- conventional-github-releaser -p eslint",
     "prepublishOnly": "yarn build"
   },
