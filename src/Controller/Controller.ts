@@ -5,96 +5,101 @@ import {
 } from 'mongodb';
 import {
   IController,
-  TAnyObject,
   TCreateIndex,
   TDropIndex,
   TCreateOne,
   TInsertOne,
-  ITimestamps,
   TCreateMany,
   TInsertMany,
   TCountDocuments,
   TCreateOneData,
   TDeleteOneOrMany,
   TDistinct,
-  TApplyFlags,
+  TApplyMixins,
   TDeleteByIdOrIds,
   TFindById,
   TFindByIds,
   TFind,
   TFindOne,
   TUpdateOneOrMany,
-  TUpdateById, TController, ITimestampsController,
+  TUpdateById,
+  IControllerConstructor,
+  TControllerOptions,
+  ITimestampsMixin,
 } from './types';
 import {getIndexName} from './utils';
 
-interface IControllerOptions<Schema extends TAnyObject,
-  UseTimestamps extends boolean,
-  UseSoftDelete extends boolean> {
-  /**
-   * Collection name.
-   */
-  collection: Collection<Schema>;
-  /**
-   * Should controller use timestamps. It adds such fields as "updatedAt: Date"
-   * and "createdAt: Date" to schema.
-   * @default false
-   */
-  useTimestamps?: UseTimestamps;
-  /**
-   * Should controller use soft delete. If adds such field as
-   * "deletedAt?: Date". So, controller does not physically deletes documents
-   * and just adds this field. Additionally, controller will be unable to find
-   * these entities until special option is passed.
-   * @default false
-   */
-  useSoftDelete?: UseSoftDelete;
-  /**
-   * Enables controller console messages.
-   * @default false
-   */
-  debug?: boolean;
-}
-
-type TControllerOptions<Schema extends TAnyObject,
-  UseTimestamps extends boolean,
-  UseSoftDelete extends boolean> =
-  | Collection<Schema>
-  | IControllerOptions<Schema, UseTimestamps, UseSoftDelete>;
-
 /**
  * Creates controller class.
- * @param {TControllerOptions<Schema, UseTimestamps, UseSoftDelete>} collectionNameOrOptions
  * @returns {{new(): IController<Schema, UseTimestamps, UseSoftDelete>, prototype: IController<Schema, UseTimestamps, UseSoftDelete>}}
  * @constructor
+ * @param collectionOrOptions
  */
-export function Controller<Schema extends TApplyFlags<{},
+export function Controller<Schema extends TApplyMixins<{},
   UseTimestamps,
   UseSoftDelete>,
   UseTimestamps extends boolean = false,
   UseSoftDelete extends boolean = false>(
-  collectionNameOrOptions: TControllerOptions<Schema,
-    UseTimestamps,
-    UseSoftDelete>,
-): TController<Schema, UseTimestamps, UseSoftDelete> {
+  collectionOrOptions: TControllerOptions<Schema, UseTimestamps, UseSoftDelete>,
+): IControllerConstructor<Schema, UseTimestamps, UseSoftDelete> {
   let collection: Collection<Schema>;
   let useTimestamps = false;
   let useSoftDelete = false;
 
-  if ('collection' in collectionNameOrOptions) {
+  if ('collection' in collectionOrOptions) {
     const {
       collection: _collection,
       useTimestamps: _useTimestamps = false,
       useSoftDelete: _useSoftDelete = false,
-    } = collectionNameOrOptions;
+    } = collectionOrOptions;
     collection = _collection;
     useTimestamps = _useTimestamps;
     useSoftDelete = _useSoftDelete;
   }
 
-  class Controller
+  return class Controller
     implements IController<Schema, UseTimestamps, UseSoftDelete> {
+    /**
+     * Current controller collection.
+     * @type {Collection<Schema>}
+     * @protected
+     */
     protected collection = collection;
+    /**
+     * Is controller using timestamps.
+     * @type {boolean}
+     * @protected
+     */
+    protected useTimestamps = useTimestamps;
+    /**
+     * Is controller using soft deletion.
+     * @type {boolean}
+     * @protected
+     */
+    protected useSoftDelete = useSoftDelete;
+
+    /**
+     * Returns mixin depending on soft deletion mode.
+     * @param {boolean} includeDeleted
+     * @returns {{deletedAt: {$exists: boolean}} | {}}
+     * @protected
+     */
+    protected useSoftDeleteMixin(includeDeleted = false) {
+      return this.useSoftDelete && !includeDeleted
+        ? {deletedAt: {$exists: false}}
+        : {};
+    }
+
+    /**
+     * Returns update part of timestamps mixin.
+     * @returns {{updatedAt: Date} | {}}
+     * @protected
+     */
+    protected useTimestampUpdateMixin() {
+      return this.useTimestamps
+        ? {updatedAt: new Date()}
+        : {};
+    }
 
     createIndex: TCreateIndex<Schema> = (fieldOrSpec, options) => {
       const indexName = options?.name || getIndexName(fieldOrSpec);
@@ -110,14 +115,32 @@ export function Controller<Schema extends TApplyFlags<{},
       options,
       findOptions,
     ) => {
-      const {includeDeleted = false} = findOptions || {};
+      const {includeDeleted} = findOptions || {};
 
       return collection.countDocuments({
-        ...(useSoftDelete && !includeDeleted
-          ? {deletedAt: {$exists: false}}
-          : {}),
+        ...this.useSoftDeleteMixin(includeDeleted),
         ...query,
       } as FilterQuery<Schema>, options);
+    };
+
+    createOne: TCreateOne<Schema> = (data: TCreateOneData<Schema>) => {
+      const now = new Date();
+
+      return this.insertOne({createdAt: now, updatedAt: now, ...data}) as
+        Promise<WithId<Schema> & ITimestampsMixin>;
+    };
+
+    createMany: TCreateMany<Schema> = items => {
+      const now = new Date();
+      const preparedItems = items
+        .map<OptionalId<Schema> & Partial<ITimestampsMixin>>(item => ({
+          ...item,
+          createdAt: item.createdAt === undefined ? now : item.createdAt,
+          updatedAt: item.updatedAt === undefined ? now : item.updatedAt,
+        }));
+
+      return this.insertMany(preparedItems) as
+        Promise<(WithId<Schema> & ITimestampsMixin)[]>;
     };
 
     deleteOne: TDeleteOneOrMany<Schema, UseSoftDelete> = (
@@ -188,12 +211,10 @@ export function Controller<Schema extends TApplyFlags<{},
       options,
       findOptions,
     ) => {
-      const {includeDeleted = false} = findOptions || {};
+      const {includeDeleted} = findOptions || {};
 
       return collection.distinct(key, {
-        ...(useSoftDelete && !includeDeleted
-          ? {deletedAt: {$exists: false}}
-          : {}),
+        ...this.useSoftDeleteMixin(includeDeleted),
         ...query,
       } as FilterQuery<Schema>, options);
     };
@@ -219,7 +240,7 @@ export function Controller<Schema extends TApplyFlags<{},
       if (entity === null) {
         return null;
       }
-      if (useSoftDelete) {
+      if (this.useSoftDelete) {
         return ('deletedAt' in entity) && !includeDeleted ? null : entity;
       }
       return entity;
@@ -261,9 +282,7 @@ export function Controller<Schema extends TApplyFlags<{},
       return this
         .collection
         .find({
-          ...(useSoftDelete && !includeDeleted
-            ? {deletedAt: {$exists: false}}
-            : {}),
+          ...this.useSoftDeleteMixin(includeDeleted),
           ...query,
         } as FilterQuery<Schema>, options)
         .toArray();
@@ -301,13 +320,12 @@ export function Controller<Schema extends TApplyFlags<{},
       options,
       findOptions,
     ) => {
-      const {includeDeleted = false} = findOptions || {};
+      const {includeDeleted} = findOptions || {};
 
       return this.collection.updateOne(
         {
-          ...(useSoftDelete && !includeDeleted
-            ? {deletedAt: {$exists: false}}
-            : {}),
+          ...this.useSoftDeleteMixin(includeDeleted),
+          ...this.useTimestampUpdateMixin(),
           ...query,
         }, update, options,
       );
@@ -323,13 +341,10 @@ export function Controller<Schema extends TApplyFlags<{},
 
       return this.collection.updateMany(
         {
-          ...(useSoftDelete && !includeDeleted
-            ? {deletedAt: {$exists: false}}
-            : {}),
+          ...this.useSoftDeleteMixin(includeDeleted),
+          ...this.useTimestampUpdateMixin(),
           ...query,
-        },
-        update,
-        options,
+        }, update, options,
       );
     };
 
@@ -347,33 +362,4 @@ export function Controller<Schema extends TApplyFlags<{},
       );
     };
   }
-
-  if (useTimestamps) {
-    return class TimestampsController
-      extends Controller
-      implements ITimestampsController<Schema, UseTimestamps, UseSoftDelete> {
-      createOne: TCreateOne<Schema> = (data: TCreateOneData<Schema>) => {
-        const now = new Date();
-
-        return this.insertOne({createdAt: now, updatedAt: now, ...data}) as
-          Promise<WithId<Schema> & ITimestamps>;
-      };
-
-      createMany: TCreateMany<Schema> = items => {
-        const now = new Date();
-        const preparedItems = items.map(
-          ({createdAt = now, updatedAt = now, ...rest}) => ({
-            createdAt,
-            updatedAt,
-            ...rest,
-          }),
-        ) as (OptionalId<Schema> & Partial<ITimestamps>)[];
-
-        return this.insertMany(preparedItems) as
-          Promise<(WithId<Schema> & ITimestamps)[]>;
-      };
-    } as any;
-  }
-
-  return Controller as any;
 }
