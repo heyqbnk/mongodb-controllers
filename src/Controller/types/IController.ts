@@ -17,6 +17,7 @@ import {
   TInsertOne,
   TDropIndex,
 } from './methods';
+import {Collection} from 'mongodb';
 
 export interface IController<Schema extends TApplyMixins<{},
   UseTimestamps,
@@ -24,95 +25,81 @@ export interface IController<Schema extends TApplyMixins<{},
   UseTimestamps extends boolean,
   UseSoftDelete extends boolean> {
   /**
+   * Wrapped collection.
+   */
+  readonly collection: Collection<Schema>;
+  /**
    * Creates index.
    */
   createIndex: TCreateIndex<Schema>;
-
   /**
    * Counts documents.
    */
   countDocuments: TCountDocuments<Schema, UseSoftDelete>;
-
   /**
    * Creates entity with specified createdAt and updatedAt fields.
    */
   createOne: TCreateOne<Schema>;
-
   /**
    * Works the same as createMany but with many entities.
    */
   createMany: TCreateMany<Schema>
-
   /**
    * Deletes single entity.
    */
   deleteOne: TDeleteOneOrMany<Schema, UseSoftDelete>;
-
   /**
    * Deletes many entities.
    */
   deleteMany: TDeleteOneOrMany<Schema, UseSoftDelete>;
-
   /**
    * Deletes entity by ID.
    */
   deleteById: TDeleteByIdOrIds<UseSoftDelete, false>;
-
   /**
    * Deletes entities by IDS.
    */
   deleteByIds: TDeleteByIdOrIds<UseSoftDelete, true>;
-
   /**
    * Returns distinct values by key and query.
    */
   distinct: TDistinct<Schema, UseSoftDelete>;
-
   /**
    * Drops index.
    */
   dropIndex: TDropIndex<Schema>;
-
   /**
    * Finds entity by its ID.
    */
   findById: TFindById<Schema, UseSoftDelete>;
-
   /**
    * Finds entities by their IDs.
    */
   findByIds: TFindByIds<Schema, UseSoftDelete>;
-
   /**
    * Returns entities by query.
    */
   find: TFind<Schema, UseSoftDelete>;
-
   /**
    * Returns single entity by query.
    */
   findOne: TFindOne<Schema, UseSoftDelete>;
-
   /**
    * Inserts new entity.
    */
   insertOne: TInsertOne<Schema>;
-
   /**
    * Inserts new entities.
    */
   insertMany: TInsertMany<Schema>;
-
   /**
    * Updates single entity by query.
    */
   updateOne: TUpdateOneOrMany<Schema, UseSoftDelete, false>;
-
   /**
    * Updates many entities by query.
    */
   updateMany: TUpdateOneOrMany<Schema, UseSoftDelete, true>;
-
   /**
    * Update entity by its ID.
    */
@@ -126,7 +113,8 @@ export interface IControllerConstructor<Schema extends TApplyMixins<{},
   UseTimestamps,
   UseSoftDelete>,
   UseTimestamps extends boolean,
-  UseSoftDelete extends boolean> {
-  new(): IController<Schema, UseTimestamps, UseSoftDelete>,
-  prototype: IController<Schema, UseTimestamps, UseSoftDelete>,
+  UseSoftDelete extends boolean>
+  extends IController<Schema, UseTimestamps, UseSoftDelete> {
+  new(): {},
+  prototype: {},
 }
