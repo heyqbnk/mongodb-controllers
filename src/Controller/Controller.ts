@@ -103,20 +103,23 @@ export function Controller<Schema extends TApplyMixins<{},
   const createOne: TCreateOne<Schema> = (data: TCreateOneData<Schema>) => {
     const now = new Date();
 
-    return insertOne({createdAt: now, updatedAt: now, ...data}) as
+    return insertOne({createdAt: now, updatedAt: now, ...data} as any) as
       Promise<WithId<Schema> & ITimestampsMixin>;
   };
 
   const createMany: TCreateMany<Schema> = items => {
     const now = new Date();
     const preparedItems = items
-      .map<OptionalId<Schema> & Partial<ITimestampsMixin>>(item => ({
-        ...item,
-        createdAt: item.createdAt === undefined ? now : item.createdAt,
-        updatedAt: item.updatedAt === undefined ? now : item.updatedAt,
-      }));
+      .map<Omit<OptionalId<Schema>,
+        keyof ITimestampsMixin> & Partial<ITimestampsMixin>>(
+        item => ({
+          ...item,
+          createdAt: item.createdAt === undefined ? now : item.createdAt,
+          updatedAt: item.updatedAt === undefined ? now : item.updatedAt,
+        }),
+      );
 
-    return insertMany(preparedItems) as
+    return insertMany(preparedItems as any) as
       Promise<(WithId<Schema> & ITimestampsMixin)[]>;
   };
 

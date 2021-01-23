@@ -42,7 +42,7 @@ export type TCountDocuments<Schema extends TAnySchema,
 
 /* createOne */
 export type TCreateOneData<Schema extends TAnySchema> =
-  OptionalId<Schema> & Partial<ITimestampsMixin>;
+  Omit<OptionalId<Schema>, keyof ITimestampsMixin> & Partial<ITimestampsMixin>;
 
 type TCreateOneResult<Schema extends TAnySchema> =
   WithId<Schema>
