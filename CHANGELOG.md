@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.2...v1.1.3) (2021-01-24)
+
+
+### Bug Fixes
+
+* **controller factory:** in case, collection and not options is passed, use it ([7a8110e](https://github.com/wolframdeus/mongodb-controllers/commit/7a8110e6d0104a01d2f34b6c7b3481c93d18d537))
+
 ### [1.1.2](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.1...v1.1.2) (2021-01-24)
 
 
