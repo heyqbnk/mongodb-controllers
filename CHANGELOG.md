@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.1...v1.1.3) (2021-01-24)
+
+
+### Bug Fixes
+
+* **createone:** fix TCreateOneData ([f309c63](https://github.com/wolframdeus/mongodb-controllers/commit/f309c63bcfd42ac5a0465cce6d937d3688121d24))
+
 ### [1.1.2](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.1...v1.1.2) (2021-01-23)
 
 
