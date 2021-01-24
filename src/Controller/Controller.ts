@@ -54,6 +54,8 @@ export function Controller<Schema extends TApplyMixins<{},
     collection = _collection;
     useTimestamps = _useTimestamps;
     useSoftDelete = _useSoftDelete;
+  } else {
+    collection = collectionOrOptions;
   }
 
   const useSoftDeleteMixin = (includeDeleted = false) =>
