@@ -1,7 +1,7 @@
 import {
   Collection,
   FilterQuery,
-  OptionalId, WithId,
+  OptionalId, UpdateQuery, WithId,
 } from 'mongodb';
 import {
   TCreateIndex,
@@ -281,14 +281,20 @@ export function Controller<Schema extends TApplyMixins<{},
     options,
     findOptions,
   ) => {
-    const {includeDeleted} = findOptions || {};
+    const {includeDeleted = false} = findOptions || {};
+    const updatePayload: UpdateQuery<Schema> = {
+      ...update,
+      $set: {
+        ...('$set' in update ? update.$set : {}),
+        ...useTimestampUpdateMixin(),
+      } as any,
+    };
 
     return collection.updateOne(
       {
         ...useSoftDeleteMixin(includeDeleted),
-        ...useTimestampUpdateMixin(),
         ...query,
-      }, update, options,
+      }, updatePayload, options,
     );
   };
 
@@ -299,13 +305,19 @@ export function Controller<Schema extends TApplyMixins<{},
     findOptions,
   ) => {
     const {includeDeleted = false} = findOptions || {};
+    const updatePayload: UpdateQuery<Schema> = {
+      ...update,
+      $set: {
+        ...('$set' in update ? update.$set : {}),
+        ...useTimestampUpdateMixin(),
+      } as any,
+    };
 
     return collection.updateMany(
       {
         ...useSoftDeleteMixin(includeDeleted),
-        ...useTimestampUpdateMixin(),
         ...query,
-      }, update, options,
+      }, updatePayload, options,
     );
   };
 
