@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.5](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.4...v1.1.5) (2021-03-18)
+
+
+### Bug Fixes
+
+* **update:** dont use $set when it is empty ([f62f639](https://github.com/wolframdeus/mongodb-controllers/commit/f62f6397860cb4462f442a56778bd1ff7cc599a2))
+
 ### [1.1.4](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.3...v1.1.4) (2021-01-25)
 
 
