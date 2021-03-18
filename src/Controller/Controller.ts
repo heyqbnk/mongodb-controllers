@@ -58,9 +58,19 @@ export function Controller<Schema extends TApplyMixins<{},
     collection = collectionOrOptions;
   }
 
+  /**
+   * Function which returns filter mixin which depends on soft delete use mode.
+   * @param {boolean} includeDeleted
+   * @returns {{deletedAt: {$exists: boolean}} | {}}
+   */
   const useSoftDeleteMixin = (includeDeleted = false) =>
     useSoftDelete && !includeDeleted ? {deletedAt: {$exists: false}} : {};
 
+  /**
+   * Function which returns update payload mixin which depends on timestamps
+   * use mode.
+   * @returns {{updatedAt: Date} | {}}
+   */
   const useTimestampUpdateMixin = () =>
     useTimestamps ? {updatedAt: new Date()} : {};
 
@@ -282,12 +292,13 @@ export function Controller<Schema extends TApplyMixins<{},
     findOptions,
   ) => {
     const {includeDeleted = false} = findOptions || {};
+    const set = {
+      ...('$set' in update ? update.$set : {}),
+      ...useTimestampUpdateMixin(),
+    } as any;
     const updatePayload: UpdateQuery<Schema> = {
       ...update,
-      $set: {
-        ...('$set' in update ? update.$set : {}),
-        ...useTimestampUpdateMixin(),
-      } as any,
+      ...(Object.keys(set).length === 0 ? {} : {$set: set}),
     };
 
     return collection.updateOne(
@@ -305,12 +316,13 @@ export function Controller<Schema extends TApplyMixins<{},
     findOptions,
   ) => {
     const {includeDeleted = false} = findOptions || {};
+    const set = {
+      ...('$set' in update ? update.$set : {}),
+      ...useTimestampUpdateMixin(),
+    } as any;
     const updatePayload: UpdateQuery<Schema> = {
       ...update,
-      $set: {
-        ...('$set' in update ? update.$set : {}),
-        ...useTimestampUpdateMixin(),
-      } as any,
+      ...(Object.keys(set).length === 0 ? {} : {$set: set}),
     };
 
     return collection.updateMany(
