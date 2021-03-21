@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.5...v1.1.6) (2021-03-21)
+
+
+### Bug Fixes
+
+* **types:** replace ObjectId from mongodb package to bson's package ObjectId ([691fd59](https://github.com/wolframdeus/mongodb-controllers/commit/691fd5989dede6eb2812df62df32f6e8450d34a8))
+
 ### [1.1.5](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.4...v1.1.5) (2021-03-18)
 
 
