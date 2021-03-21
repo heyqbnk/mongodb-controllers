@@ -5,7 +5,6 @@ import {
   FindOneOptions,
   IndexOptions,
   MongoCountPreferences, MongoDistinctPreferences,
-  ObjectId,
   OptionalId,
   UpdateManyOptions,
   UpdateOneOptions,
@@ -13,6 +12,7 @@ import {
   UpdateWriteOpResult,
   WithId,
 } from 'mongodb';
+import {ObjectId} from 'bson';
 import {TAnySchema, TFlattenIfArray, TIf} from '../../types';
 import {ITimestampsMixin} from './mixins';
 
