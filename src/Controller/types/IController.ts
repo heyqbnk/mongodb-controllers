@@ -18,10 +18,12 @@ import {
   TDropIndex,
 } from './methods';
 import {Collection} from 'mongodb';
+import {TIf} from '../../types';
+import {ISoftDeleteMixin, ITimestampsMixin} from './mixins';
 
-export interface IController<Schema extends TApplyMixins<{},
-  UseTimestamps,
-  UseSoftDelete>,
+export interface IController<Schema extends {_id: any} &
+  TIf<UseTimestamps, ITimestampsMixin, {}> &
+  TIf<UseSoftDelete, Partial<ISoftDeleteMixin>, {}>,
   UseTimestamps extends boolean,
   UseSoftDelete extends boolean> {
   /**
