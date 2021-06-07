@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/wolframdeus/mongodb-controllers/compare/v1.2.0...v1.2.1) (2021-06-07)
+
+
+### Bug Fixes
+
+* **types:** remake TApplyMixins ([754089a](https://github.com/wolframdeus/mongodb-controllers/commit/754089a2b4c4e7ed70c53b2957be9fe73bda4b0f))
+
 ## [1.2.0](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.6...v1.2.0) (2021-06-07)
 
 

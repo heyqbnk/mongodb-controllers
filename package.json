@@ -1,6 +1,6 @@
 {
   "name": "@kibcode/mongodb-controllers",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": false,
   "description": "Collection controllers for MongoDB",
   "repository": "git@github.com:wolframdeus/mongodb-controllers.git",
