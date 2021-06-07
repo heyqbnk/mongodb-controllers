@@ -13,7 +13,7 @@ import {
   WithId,
 } from 'mongodb';
 import {ObjectId} from 'bson';
-import {TAnySchema, TFlattenIfArray, TIf} from '../../types';
+import {TFlattenIfArray, TIf} from '../../types';
 import {ITimestampsMixin} from './mixins';
 
 /**
@@ -28,11 +28,11 @@ interface ISoftDeleteFindOptions {
 }
 
 /* createIndex */
-export type TCreateIndex<Schema extends TAnySchema> =
+export type TCreateIndex<Schema> =
   (fieldOrSpec: TFieldSpec<Schema>, options?: IndexOptions) => Promise<string>;
 
 /* countDocuments */
-export type TCountDocuments<Schema extends TAnySchema,
+export type TCountDocuments<Schema,
   UseSoftDelete extends boolean> =
   (
     query?: FilterQuery<Schema>,
@@ -41,28 +41,28 @@ export type TCountDocuments<Schema extends TAnySchema,
   ) => Promise<number>;
 
 /* createOne */
-export type TCreateOneData<Schema extends TAnySchema> =
+export type TCreateOneData<Schema> =
   Omit<OptionalId<Schema>, keyof ITimestampsMixin> & Partial<ITimestampsMixin>;
 
-type TCreateOneResult<Schema extends TAnySchema> =
+type TCreateOneResult<Schema> =
   WithId<Schema>
   & ITimestampsMixin;
 
-export type TCreateOne<Schema extends TAnySchema> =
+export type TCreateOne<Schema> =
   (data: TCreateOneData<Schema>) => Promise<TCreateOneResult<Schema>>
 
 /* createMany */
-export type TCreateMany<Schema extends TAnySchema> =
+export type TCreateMany<Schema> =
   (data: TCreateOneData<Schema>[]) => Promise<TCreateOneResult<Schema>[]>;
 
 /* dropIndex */
-export type TDropIndex<Schema extends TAnySchema> = (
+export type TDropIndex<Schema> = (
   indexNameOrFieldSpec: string | TFieldSpec<Schema>,
   options?: CommonOptions & { maxTimeMS?: number },
 ) => Promise<void>;
 
 /* findById */
-export type TFindById<Schema extends TAnySchema,
+export type TFindById<Schema,
   UseSoftDelete extends boolean> =
   <T = Schema>(
     id: ObjectId,
@@ -71,7 +71,7 @@ export type TFindById<Schema extends TAnySchema,
   ) => Promise<Schema | null>;
 
 /* findByIds */
-export type TFindByIds<Schema extends TAnySchema,
+export type TFindByIds<Schema,
   UseSoftDelete extends boolean> =
   <T = Schema>(
     ids: ObjectId[],
@@ -80,7 +80,7 @@ export type TFindByIds<Schema extends TAnySchema,
   ) => Promise<Schema[]>;
 
 /* find */
-export type TFind<Schema extends TAnySchema, UseSoftDelete extends boolean> =
+export type TFind<Schema, UseSoftDelete extends boolean> =
   <T = Schema>(
     query?: FilterQuery<Schema>,
     options?: FindOneOptions<T extends Schema ? Schema : T>,
@@ -88,7 +88,7 @@ export type TFind<Schema extends TAnySchema, UseSoftDelete extends boolean> =
   ) => Promise<T[]>;
 
 /* findOne */
-export type TFindOne<Schema extends TAnySchema,
+export type TFindOne<Schema,
   UseSoftDelete extends boolean> =
   <T = Schema>(
     query?: FilterQuery<Schema>,
@@ -97,7 +97,7 @@ export type TFindOne<Schema extends TAnySchema,
   ) => Promise<T | null>;
 
 /* updateOne / updateMany */
-export type TUpdateOneOrMany<Schema extends TAnySchema,
+export type TUpdateOneOrMany<Schema,
   UseSoftDelete extends boolean,
   UseMany extends boolean> = (
   query: FilterQuery<Schema>,
@@ -107,7 +107,7 @@ export type TUpdateOneOrMany<Schema extends TAnySchema,
 ) => Promise<UpdateWriteOpResult>;
 
 /* updateById */
-export type TUpdateById<Schema extends TAnySchema,
+export type TUpdateById<Schema,
   UseSoftDelete extends boolean> = (
   id: ObjectId,
   update: UpdateQuery<Schema> | Partial<Schema>,
@@ -116,7 +116,7 @@ export type TUpdateById<Schema extends TAnySchema,
 ) => Promise<UpdateWriteOpResult>;
 
 /* deleteOne */
-export type TDeleteOneOrMany<Schema extends TAnySchema,
+export type TDeleteOneOrMany<Schema,
   UseSoftDelete extends boolean> = (
   filter: FilterQuery<Schema>,
   options?: CommonOptions & { bypassDocumentValidation?: boolean },
@@ -136,7 +136,7 @@ export type TDeleteByIdOrIds<UseSoftDelete extends boolean,
   DeleteWriteOpResultObject>>;
 
 /* distinct */
-export type TDistinct<Schema extends TAnySchema,
+export type TDistinct<Schema,
   UseSoftDelete extends boolean> =
   <Key extends keyof Schema>(
     key: Exclude<Key, number | symbol>,
@@ -146,9 +146,9 @@ export type TDistinct<Schema extends TAnySchema,
   ) => Promise<TFlattenIfArray<Schema[Key]>[]>;
 
 /* insertOne */
-export type TInsertOne<Schema extends TAnySchema> =
+export type TInsertOne<Schema> =
   (item: OptionalId<Schema>) => Promise<WithId<Schema>>;
 
 /* insertMany */
-export type TInsertMany<Schema extends TAnySchema> =
+export type TInsertMany<Schema> =
   (items: OptionalId<Schema>[]) => Promise<WithId<Schema>[]>;

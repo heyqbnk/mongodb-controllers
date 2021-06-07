@@ -1,17 +1,16 @@
-import {TAnySchema, TDefaultSchema} from '../../types';
 import {Collection} from 'mongodb';
 
 /**
  * Field specification for index creation.
  */
-export type TFieldSpec<Schema extends TDefaultSchema> =
+export type TFieldSpec<Schema> =
   | keyof Schema
   | { [key in keyof Schema | string]?: -1 | 1 | 'text' | any };
 
 /**
  * Options which could be used to create controller class.
  */
-export interface IControllerOptions<Schema extends TAnySchema,
+export interface IControllerOptions<Schema,
   UseTimestamps extends boolean,
   UseSoftDelete extends boolean> {
   /**
@@ -37,7 +36,7 @@ export interface IControllerOptions<Schema extends TAnySchema,
 /**
  * All types of options which could be used to create controller class.
  */
-export type TControllerOptions<Schema extends TAnySchema,
+export type TControllerOptions<Schema,
   UseTimestamps extends boolean,
   UseSoftDelete extends boolean> =
   // Collection itself.

@@ -14,7 +14,6 @@ import {
   TCreateOneData,
   TDeleteOneOrMany,
   TDistinct,
-  TApplyMixins,
   TDeleteByIdOrIds,
   TFindById,
   TFindByIds,
@@ -24,7 +23,7 @@ import {
   TUpdateById,
   IControllerConstructor,
   TControllerOptions,
-  ITimestampsMixin,
+  ITimestampsMixin, TDefaultSchema,
 } from './types';
 import {getIndexName} from './utils';
 
@@ -34,9 +33,7 @@ import {getIndexName} from './utils';
  * @constructor
  * @param collectionOrOptions
  */
-export function Controller<Schema extends TApplyMixins<{},
-  UseTimestamps,
-  UseSoftDelete>,
+export function Controller<Schema extends TDefaultSchema<UseTimestamps, UseSoftDelete>,
   UseTimestamps extends boolean = false,
   UseSoftDelete extends boolean = false>(
   collectionOrOptions: TControllerOptions<Schema, UseTimestamps, UseSoftDelete>,

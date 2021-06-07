@@ -21,9 +21,11 @@ import {Collection} from 'mongodb';
 import {TIf} from '../../types';
 import {ISoftDeleteMixin, ITimestampsMixin} from './mixins';
 
-export interface IController<Schema extends {_id: any} &
+export type TDefaultSchema<UseTimestamps, UseSoftDelete> = {_id: any} &
   TIf<UseTimestamps, ITimestampsMixin, {}> &
-  TIf<UseSoftDelete, Partial<ISoftDeleteMixin>, {}>,
+  TIf<UseSoftDelete, Partial<ISoftDeleteMixin>, {}>;
+
+export interface IController<Schema extends TDefaultSchema<UseTimestamps, UseSoftDelete>,
   UseTimestamps extends boolean,
   UseSoftDelete extends boolean> {
   /**

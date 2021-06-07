@@ -1,12 +1,11 @@
 import {TFieldSpec} from './types';
-import {TAnySchema} from '../types';
 
 /**
  * Creates index name based on its specification.
  * @param {TFieldSpec<Schema>} fieldOrSpec
  * @returns {string}
  */
-export function getIndexName<Schema extends TAnySchema>(
+export function getIndexName<Schema>(
   fieldOrSpec: TFieldSpec<Schema>
 ): string {
   if (typeof fieldOrSpec === 'string') {
