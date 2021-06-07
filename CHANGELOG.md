@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.6...v1.2.0) (2021-06-07)
+
+
+### Features
+
+* **icontroller:** allow to create controller with custom _id type ([7bd7d94](https://github.com/wolframdeus/mongodb-controllers/commit/7bd7d947ff5ee7f3d2ed9a7b939e947b0569bc55))
+
 ### [1.1.6](https://github.com/wolframdeus/mongodb-controllers/compare/v1.1.5...v1.1.6) (2021-03-21)
 
 
