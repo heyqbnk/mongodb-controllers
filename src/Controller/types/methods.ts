@@ -58,7 +58,7 @@ export type TCreateMany<Schema> =
 /* dropIndex */
 export type TDropIndex<Schema> = (
   indexNameOrFieldSpec: string | TFieldSpec<Schema>,
-  options?: CommonOptions & { maxTimeMS?: number },
+  options?: CommonOptions & {maxTimeMS?: number},
 ) => Promise<void>;
 
 /* findById */
@@ -107,9 +107,9 @@ export type TUpdateOneOrMany<Schema,
 ) => Promise<UpdateWriteOpResult>;
 
 /* updateById */
-export type TUpdateById<Schema,
+export type TUpdateById<Schema extends {_id: any},
   UseSoftDelete extends boolean> = (
-  id: ObjectId,
+  id: Schema['_id'],
   update: UpdateQuery<Schema> | Partial<Schema>,
   options?: UpdateOneOptions,
   findOptions?: TIf<UseSoftDelete, ISoftDeleteFindOptions, never>,
@@ -119,17 +119,18 @@ export type TUpdateById<Schema,
 export type TDeleteOneOrMany<Schema,
   UseSoftDelete extends boolean> = (
   filter: FilterQuery<Schema>,
-  options?: CommonOptions & { bypassDocumentValidation?: boolean },
+  options?: CommonOptions & {bypassDocumentValidation?: boolean},
   findOptions?: TIf<UseSoftDelete, ISoftDeleteFindOptions, never>,
 ) => Promise<TIf<UseSoftDelete,
   UpdateWriteOpResult,
   DeleteWriteOpResultObject>>;
 
 /* deleteById / deleteByIds */
-export type TDeleteByIdOrIds<UseSoftDelete extends boolean,
+export type TDeleteByIdOrIds<Schema extends {_id: any},
+  UseSoftDelete extends boolean,
   UseMany extends boolean> = (
-  idOrIds: UseMany extends true ? ObjectId[] : ObjectId,
-  options?: CommonOptions & { bypassDocumentValidation?: boolean },
+  idOrIds: UseMany extends true ? Schema['_id'][] : Schema['_id'],
+  options?: CommonOptions & {bypassDocumentValidation?: boolean},
   findOptions?: TIf<UseSoftDelete, ISoftDeleteFindOptions, never>,
 ) => Promise<TIf<UseSoftDelete,
   UpdateWriteOpResult,

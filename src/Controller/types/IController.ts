@@ -59,11 +59,11 @@ export interface IController<Schema extends TDefaultSchema<UseTimestamps, UseSof
   /**
    * Deletes entity by ID.
    */
-  deleteById: TDeleteByIdOrIds<UseSoftDelete, false>;
+  deleteById: TDeleteByIdOrIds<Schema, UseSoftDelete, false>;
   /**
    * Deletes entities by IDS.
    */
-  deleteByIds: TDeleteByIdOrIds<UseSoftDelete, true>;
+  deleteByIds: TDeleteByIdOrIds<Schema, UseSoftDelete, true>;
   /**
    * Returns distinct values by key and query.
    */

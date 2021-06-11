@@ -170,7 +170,7 @@ export function Controller<Schema extends TDefaultSchema<UseTimestamps, UseSoftD
     return collection.deleteMany(filter, options) as any;
   };
 
-  const deleteById: TDeleteByIdOrIds<UseSoftDelete, false> = (
+  const deleteById: TDeleteByIdOrIds<Schema, UseSoftDelete, false> = (
     id,
     options,
     findOptions,
@@ -182,7 +182,7 @@ export function Controller<Schema extends TDefaultSchema<UseTimestamps, UseSoftD
     ) as any;
   };
 
-  const deleteByIds: TDeleteByIdOrIds<UseSoftDelete, true> = (
+  const deleteByIds: TDeleteByIdOrIds<Schema, UseSoftDelete, true> = (
     ids,
     options,
     findOptions,
