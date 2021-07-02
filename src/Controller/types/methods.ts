@@ -62,19 +62,19 @@ export type TDropIndex<Schema> = (
 ) => Promise<void>;
 
 /* findById */
-export type TFindById<Schema,
+export type TFindById<Schema extends {_id: any},
   UseSoftDelete extends boolean> =
   <T = Schema>(
-    id: ObjectId,
+    id: Schema['_id'],
     options?: FindOneOptions<T extends Schema ? Schema : T>,
     findOptions?: TIf<UseSoftDelete, ISoftDeleteFindOptions, never>,
   ) => Promise<Schema | null>;
 
 /* findByIds */
-export type TFindByIds<Schema,
+export type TFindByIds<Schema extends {_id: any},
   UseSoftDelete extends boolean> =
   <T = Schema>(
-    ids: ObjectId[],
+    ids: Schema['_id'][],
     options?: FindOneOptions<T extends Schema ? Schema : T>,
     findOptions?: TIf<UseSoftDelete, ISoftDeleteFindOptions, never>,
   ) => Promise<Schema[]>;
