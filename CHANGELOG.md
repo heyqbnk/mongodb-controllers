@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://github.com/wolframdeus/mongodb-controllers/compare/v1.2.2...v1.2.3) (2021-07-02)
+
+
+### Bug Fixes
+
+* **methods:** fix id type in methods which use it ([89ebcf6](https://github.com/wolframdeus/mongodb-controllers/commit/89ebcf6859b285711f688c8c4de75fc34741dfd8))
+
 ### [1.2.2](https://github.com/wolframdeus/mongodb-controllers/compare/v1.2.1...v1.2.2) (2021-06-11)
 
 
